@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+
+<head>
+    @include('partials.head')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+
+<body class="min-h-screen bg-white white:bg-zinc-800 flex">
+
+    <flux:sidebar sticky stashable
+        class="border-e border-zinc-200 bg-sky-100 dark:border-zinc-700 dark:bg-sky-900 h-screen">
+        <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+
+        <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <span class="font-semibold text-lg">VPN Access Request</span>
+        </a>
+
+        {{-- @auth
+        <flux:navlist variant="outline">
+            <flux:navlist.group :heading="__('Platform')" class="grid">
+                <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
+                    wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse"
+                    wire:navigate>
+                    <span class="font-semibold text-lg">VPN Access Request</span>
+                </a>
+            </flux:navlist.group>
+        </flux:navlist>
+        @endauth --}}
+
+        {{-- Dashboard Menu Item --}}
+        <flux:navlist.item icon="home" :href="route('approvals')" :current="request()->routeIs('approvals')"
+            wire:navigate>
+            {{ __('Dashboard') }}
+        </flux:navlist.item>
+
+        {{-- Approvals Menu Item --}}
+        <flux:navlist.item icon="check-circle" :href="route('approvals')" :current="request()->routeIs('approvals')"
+            wire:navigate>
+            {{ __('Approvals') }}
+        </flux:navlist.item>
+
+        {{-- VPN Access Request (optional title or redundant?) --}}
+        {{-- <flux:navlist.item icon="key" :href="route('vpn.request')" :current="request()->routeIs('vpn.request')"
+            wire:navigate>
+            {{ __('VPN Access Request') }}
+        </flux:navlist.item> --}}
+
+
+        @auth
+            <flux:navlist variant="outline">
+                <flux:navlist.group :heading="__('Platform')" class="grid">
+
+                    {{-- Dashboard Menu Item --}}
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
+                        wire:navigate>
+                        {{ __('Dashboard') }}
+                    </flux:navlist.item>
+
+                    {{-- Approvals Menu Item --}}
+                    <flux:navlist.item icon="check-circle" :href="route('approvals.index')"
+                        :current="request()->routeIs('approvals.index')" wire:navigate>
+                        {{ __('Approvals') }}
+                    </flux:navlist.item>
+
+                    {{-- VPN Access Request (optional title or redundant?) --}}
+                    <flux:navlist.item icon="key" :href="route('vpn.request')" :current="request()->routeIs('vpn.request')"
+                        wire:navigate>
+                        {{ __('VPN Access Request') }}
+                    </flux:navlist.item>
+
+                </flux:navlist.group>
+            </flux:navlist>
+        @endauth
+
+
+        <flux:spacer />
+
+        @auth
+            <flux:dropdown class="hidden lg:block" position="bottom" align="start">
+                <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
+                    icon:trailing="chevrons-up-down" />
+                <flux:menu class="w-[220px]">
+                    <flux:menu.radio.group>
+                        <div class="p-0 text-sm font-normal">
+                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                                    <span
+                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                        {{ auth()->user()->initials() }}
+                                    </span>
+                                </span>
+                                <div class="grid flex-1 text-start text-sm leading-tight">
+                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </flux:menu.radio.group>
+                    <flux:menu.separator />
+                    <flux:menu.radio.group>
+                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}
+                        </flux:menu.item>
+                    </flux:menu.radio.group>
+                    <flux:menu.separator />
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                            {{ __('Log Out') }}
+                        </flux:menu.item>
+                    </form>
+                </flux:menu>
+            </flux:dropdown>
+
+            <flux:header class="lg:hidden">
+                <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+                <flux:spacer />
+                <flux:dropdown position="top" align="end">
+                    <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
+                    <flux:menu>
+                        <flux:menu.radio.group>
+                            <div class="p-0 text-sm font-normal">
+                                <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                                    <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                                        <span
+                                            class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                            {{ auth()->user()->initials() }}
+                                        </span>
+                                    </span>
+                                    <div class="grid flex-1 text-start text-sm leading-tight">
+                                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </flux:menu.radio.group>
+                        <flux:menu.separator />
+                        <flux:menu.radio.group>
+                            <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}
+                            </flux:menu.item>
+                        </flux:menu.radio.group>
+                        <flux:menu.separator />
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                                {{ __('Log Out') }}
+                            </flux:menu.item>
+                        </form>
+                    </flux:menu>
+                </flux:dropdown>
+            </flux:header>
+        @endauth
+
+        @guest
+            <flux:navlist variant="outline">
+                <flux:navlist.item icon="arrow-right-start-on-rectangle" :href="route('login')" wire:navigate>
+                    {{ __('Log In') }}
+                </flux:navlist.item>
+            </flux:navlist>
+        @endguest
+    </flux:sidebar>
+
+    <div class="flex-1 overflow-y-auto">
+        <main class="p-4 lg:p-6">
+            {{ $slot }}
+        </main>
+    </div>
+
+    @fluxScripts
+    @livewireScripts
+</body>
+
+</html>
