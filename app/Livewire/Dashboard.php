@@ -4,16 +4,18 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\VpnRequest;
+
 class Dashboard extends Component
 {
-     public $requests;
+    public $requests;
 
     public function mount()
     {
-        // Fetch only the authenticated user's requests
-        $this->requests = VpnRequest::where('user_id', Auth::id())
-            ->latest()
-            ->get();
+        if (!session()->has('email')) {
+            return redirect()->route('enter-email')->with('error', 'Please enter your email to view your dashboard.');
+        }
+
+        $this->requests = VpnRequest::where('email', session('email'))->latest()->get();
     }
     public function render()
     {

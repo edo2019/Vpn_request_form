@@ -6,24 +6,27 @@ use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\VpnRequestApproval;
 use App\Livewire\Dashboard;
+use App\Livewire\EnterEmail;
 
 
 // Route::get('/', function () {
 //     return view('welcome');
 // })->name('home');
-Route::get('/vpn-request', function () {
+Route::get('/', function () {
     // dd('Route is working');
     return view('vpn-request');
 });
 
-Route::get('/approvals', VpnRequestApproval::class)->name('approvals');
 
 // Route::view('dashboard', 'dashboard')
 //     ->middleware(['auth', 'verified'])
 //     ->name('dashboard');
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
-});
+Route::get('/approvals', VpnRequestApproval::class)->name('approvals');
+Route::get('/dashboard', Dashboard::class)->name('dashboard');
+Route::get('/enter-email', EnterEmail::class)->name('enter-email');
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+// });
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
